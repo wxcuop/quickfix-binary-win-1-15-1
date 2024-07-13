@@ -1,1 +1,2 @@
-# quickfix-binary-win-1-15-1
+Windows build of Quckfix
+

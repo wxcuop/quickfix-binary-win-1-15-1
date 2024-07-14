@@ -41,6 +41,11 @@ jobs:
           choco install visualstudio2019buildtools --package-parameters "--add Microsoft.VisualStudio.Workload.VCTools --includeRecommended --includeOptional"
           choco install vswhere
 
+      - name: Install OpenSSL
+        run: |
+          choco install openssl
+
+
       - name: Locate Visual Studio 2019
         id: locate-vs
         run: |

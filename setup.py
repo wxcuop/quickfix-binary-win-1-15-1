@@ -8,6 +8,8 @@ from datetime import datetime, timezone
 class build_ext_subclass(build_ext):
     def build_extensions(self):
         self.compiler.define_macro("PYTHON_MAJOR_VERSION", sys.version_info[0])
+        
+        # Test for std::tr1::shared_ptr
         print("Testing for std::tr1::shared_ptr...")
         try:
             self.compiler.compile(['test_std_tr1_shared_ptr.cpp'])
@@ -16,17 +18,19 @@ class build_ext_subclass(build_ext):
         except:
             print("...not found")
 
+        # Test for std::shared_ptr
         print("Testing for std::shared_ptr...")
         try:
-            self.compiler.compile(['test_std_shared_ptr.cpp'], extra_preargs=['-std=c++0x'])
+            self.compiler.compile(['test_std_shared_ptr.cpp'], extra_preargs=['/std:c++17'] if self.compiler.compiler_type == 'msvc' else ['-std=c++17'])
             self.compiler.define_macro("HAVE_STD_SHARED_PTR")
             print("...found")
         except:
             print("...not found")
 
+        # Test for std::unique_ptr
         print("Testing for std::unique_ptr...")
         try:
-            self.compiler.compile(['test_std_unique_ptr.cpp'], extra_preargs=['-std=c++0x'])
+            self.compiler.compile(['test_std_unique_ptr.cpp'], extra_preargs=['/std:c++17'] if self.compiler.compiler_type == 'msvc' else ['-std=c++17'])
             self.compiler.define_macro("HAVE_STD_UNIQUE_PTR")
             print("...found")
         except:
@@ -49,7 +53,7 @@ with open('LICENSE') as file:
 
 setup(
     name='quickfix-binary',
-    version='1.15.1',
+    version='1.15.1+main',
     py_modules=[
         'quickfix', 'quickfixt11', 'quickfix40', 'quickfix41', 'quickfix42',
         'quickfix43', 'quickfix44', 'quickfix50', 'quickfix50sp1', 'quickfix50sp2'
@@ -61,15 +65,27 @@ setup(
     description="FIX (Financial Information eXchange) protocol implementation",
     url='http://www.quickfixengine.org',
     download_url='http://www.quickfixengine.org',
-    include_dirs=['C++'],
+    include_dirs=['C++', 'C:/Program Files/OpenSSL-Win64/include'],  # Default path for OpenSSL include directory
+    libraries=[
+        ('ssl', {
+            'include_dirs': ['C:/Program Files/OpenSSL-Win64/include'],
+            'library_dirs': ['C:/Program Files/OpenSSL-Win64/lib'],
+            'libraries': ['ssl']
+        }),
+        ('crypto', {
+            'include_dirs': ['C:/Program Files/OpenSSL-Win64/include'],
+            'library_dirs': ['C:/Program Files/OpenSSL-Win64/lib'],
+            'libraries': ['crypto']
+        })
+    ],
     license=license_,
     cmdclass={'build_ext': build_ext_subclass},
     ext_modules=[Extension(
         '_quickfix', glob.glob('C++/*.cpp'),
-        extra_compile_args=[
-            '-std=c++0x', '-Wno-unused-variable',
-            '-Wno-deprecated-declarations', '-Wno-maybe-uninitialized',
-            '-Wno-stringop-truncation', '-Wno-stringop-overflow'
-        ]
-    )],
+        include_dirs=['C++', 'C:/Program Files/OpenSSL-Win64/include'],
+        library_dirs=['C:/Program Files/OpenSSL-Win64/lib'],
+        libraries=['ssl', 'crypto'],
+        extra_compile_args=['/std:c++17'] if sysconfig.get_platform() == 'win32' else ['-std=c++17'],
+        extra_link_args=[]
+    )]
 )

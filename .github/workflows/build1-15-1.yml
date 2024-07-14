@@ -21,7 +21,7 @@ jobs:
 
       - name: Unzip QuickFIX 1.15.1
         run: |
-          Expand-Archive -Path quickfix-binary/quickfix-1.15.1.zip -DestinationPath quickfix
+          Expand-Archive -Path quickfix-binary-win-1-15-1/quickfix-1.15.1.zip -DestinationPath quickfix
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
@@ -45,7 +45,6 @@ jobs:
         run: |
           choco install openssl
 
-
       - name: Locate Visual Studio 2019
         id: locate-vs
         run: |
@@ -54,19 +53,27 @@ jobs:
 
       - name: Prepare files for wheel build
         run: |
-          mkdir ./quickfix-binary/C++
-          mkdir ./quickfix-binary/spec
-          cp quickfix/src/python3/*.py ./quickfix-binary/
-          cp quickfix/src/C++/*.h ./quickfix-binary/C++
-          cp quickfix/src/C++/*.hpp ./quickfix-binary/C++
-          cp quickfix/src/C++/*.cpp ./quickfix-binary/C++
-          cp -R quickfix/src/C++/double-conversion ./quickfix-binary/C++
-          cp quickfix/src/python3/QuickfixPython.cpp ./quickfix-binary/C++
-          cp quickfix/src/python3/QuickfixPython.h ./quickfix-binary/
-          cp quickfix/LICENSE ./quickfix-binary/
-          cp quickfix/spec/FIX*.xml ./quickfix-binary/spec
-          touch ./quickfix-binary/C++/config.h
-          touch ./quickfix-binary/C++/config_windows.h
+          mkdir -p ./quickfix-binary-win-1-15-1/C++
+          mkdir -p ./quickfix-binary-win-1-15-1/spec
+          if (Test-Path -Path "quickfix/src/python3") {
+              cp quickfix/src/python3/*.py ./quickfix-binary-win-1-15-1/
+              cp quickfix/src/python3/QuickfixPython.cpp ./quickfix-binary-win-1-15-1/C++
+              cp quickfix/src/python3/QuickfixPython.h ./qquickfix-binary-win-1-15-1/
+          } else {
+              Write-Host "Path 'quickfix/src/python3' does not exist"
+          }
+          if (Test-Path -Path "quickfix/src/C++") {
+              cp quickfix/src/C++/*.h ./quickfix-binary-win-1-15-1/C++
+              cp quickfix/src/C++/*.hpp ./quickfix-binary-win-1-15-1/C++
+              cp quickfix/src/C++/*.cpp ./quickfix-binary-win-1-15-1/C++
+              cp -R quickfix/src/C++/double-conversion ./quickfix-binary/C++
+          } else {
+              Write-Host "Path 'quickfix/src/C++' does not exist"
+          }
+          cp quickfix/LICENSE ./quickfix-binary-win-1-15-1/
+          cp quickfix/spec/FIX*.xml ./quickfix-binary-win-1-15-1/spec
+          touch ./quickfix-binary-win-1-15-1/C++/config.h
+          touch ./quickfix-binary-win-1-15-1/C++/config_windows.h
 
       - name: Build wheel
         env:
@@ -76,13 +83,13 @@ jobs:
             cmake -G "Visual Studio 16 2019" -A x64 -DHAVE_SSL=ON -DCMAKE_INSTALL_PREFIX="C:/quickfix" .
             cmake --build . --config Release
         run: |
-          cd quickfix-binary
+          cd quickfix-binary-win-1-15-1
           python -m cibuildwheel --output-dir wheelhouse --config-file setup.py
 
       - uses: actions/upload-artifact@v4
         with:
           name: quickfix-wheels
-          path: ./quickfix-binary/wheelhouse/*.whl
+          path: ./quickfix-binary-win-1-15-1y/wheelhouse/*.whl
 
   deploy:
     needs: build

@@ -15,9 +15,9 @@ jobs:
       - name: Checkout quickfix-binary repository
         uses: actions/checkout@v4
         with:
-          repository: wxcuop/quickfix-binary
+          repository: wxcuop/quickfix-binary-win-1-15-1
           ref: main
-          path: quickfix-binary
+          path: quickfix-binary-win-1-15-1
 
       - name: Unzip QuickFIX 1.15.1
         run: |

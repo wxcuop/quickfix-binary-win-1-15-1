@@ -8,34 +8,6 @@ from datetime import datetime, timezone
 class build_ext_subclass(build_ext):
     def build_extensions(self):
         self.compiler.define_macro("PYTHON_MAJOR_VERSION", sys.version_info[0])
-        
-        # Test for std::tr1::shared_ptr
-        print("Testing for std::tr1::shared_ptr...")
-        try:
-            self.compiler.compile(['test_std_tr1_shared_ptr.cpp'])
-            self.compiler.define_macro("HAVE_STD_TR1_SHARED_PTR")
-            print("...found")
-        except:
-            print("...not found")
-
-        # Test for std::shared_ptr
-        print("Testing for std::shared_ptr...")
-        try:
-            self.compiler.compile(['test_std_shared_ptr.cpp'], extra_preargs=['/std:c++17'] if self.compiler.compiler_type == 'msvc' else ['-std=c++17'])
-            self.compiler.define_macro("HAVE_STD_SHARED_PTR")
-            print("...found")
-        except:
-            print("...not found")
-
-        # Test for std::unique_ptr
-        print("Testing for std::unique_ptr...")
-        try:
-            self.compiler.compile(['test_std_unique_ptr.cpp'], extra_preargs=['/std:c++17'] if self.compiler.compiler_type == 'msvc' else ['-std=c++17'])
-            self.compiler.define_macro("HAVE_STD_UNIQUE_PTR")
-            print("...found")
-        except:
-            print("...not found")
-
         build_ext.build_extensions(self)
 
 # Remove the "-Wstrict-prototypes" compiler option, which isn't valid for C++.
@@ -53,7 +25,7 @@ with open('LICENSE') as file:
 
 setup(
     name='quickfix-binary',
-    version='1.15.1+main',
+    version='1.15.1',
     py_modules=[
         'quickfix', 'quickfixt11', 'quickfix40', 'quickfix41', 'quickfix42',
         'quickfix43', 'quickfix44', 'quickfix50', 'quickfix50sp1', 'quickfix50sp2'
@@ -85,7 +57,6 @@ setup(
         include_dirs=['C++', 'C:/Program Files/OpenSSL-Win64/include'],
         library_dirs=['C:/Program Files/OpenSSL-Win64/lib'],
         libraries=['ssl', 'crypto'],
-        #extra_compile_args=['/std:c++17'] if sysconfig.get_platform() == 'win32' else ['-std=c++17'],
         extra_link_args=[]
     )]
 )

@@ -50,18 +50,37 @@ jobs:
         run: |
           $vsPath = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
           echo "##vso[task.setvariable variable=vs_path]$vsPath"
+          
+      - name: Configure QuickFIX
+        run: |
+          cd quickfix/src
+          echo '#define HAVE_STLPORT 1' >> config_windows.h
+          echo '#define HAVE_ODBC 1' >> config_windows.h
+          echo '#define HAVE_MYSQL 1' >> config_windows.h
+          echo '#define HAVE_POSTGRESQL 1' >> config_windows.h
+
+      - name: Build QuickFIX
+        run: |
+          $env:PATH += ";${{ steps.locate-vs.outputs.vs_path }}\MSBuild\Current\Bin"
+          mkdir quickfix/build
+          cd quickfix/build
+          cmake -G "Visual Studio 16 2019" -A x64 -DHAVE_SSL=ON -DCMAKE_INSTALL_PREFIX="C:/quickfix" -DCMAKE_CXX_STANDARD=17 ..
+          cmake --build . --config Release
+          cmake --install .
 
       - name: Prepare files for wheel build
         run: |
           mkdir -p ./quickfix-binary/C++
           mkdir -p ./quickfix-binary/spec
+          cp quickfix/build/*.dll ./quickfix-binary/C++  # Copy precompiled binaries
           if (Test-Path -Path "quickfix/src/python3") {
               cp quickfix/src/python3/*.py ./quickfix-binary/
-              cp quickfix/src/python3/QuickfixPython.cpp ./quickfix/C++
-              cp quickfix/src/python3/QuickfixPython.h ./qquickfix1/
+              cp quickfix/src/python3/QuickfixPython.cpp ./quickfix-binary/C++
+              cp quickfix/src/python3/QuickfixPython.h ./quickfix-binary/C++
           } else {
               Write-Host "Path 'quickfix/src/python3' does not exist"
           }
+          
           if (Test-Path -Path "quickfix/src/C++") {
               cp quickfix/src/C++/*.h ./quickfix-binary/C++
               cp quickfix/src/C++/*.hpp ./quickfix-binary/C++
@@ -70,10 +89,12 @@ jobs:
           } else {
               Write-Host "Path 'quickfix/src/C++' does not exist"
           }
+          
           cp quickfix/LICENSE ./quickfix-binary/
           cp quickfix/spec/FIX*.xml ./quickfix-binary/spec
           touch ./quickfix-binary/C++/config.h
           touch ./quickfix-binary/C++/config_windows.h
+
 
       - name: Build wheel
         env:

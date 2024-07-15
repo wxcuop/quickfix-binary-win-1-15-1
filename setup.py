@@ -85,7 +85,7 @@ setup(
         include_dirs=['C++', 'C:/Program Files/OpenSSL-Win64/include'],
         library_dirs=['C:/Program Files/OpenSSL-Win64/lib'],
         libraries=['ssl', 'crypto'],
-        extra_compile_args=['/std:c++17'] if sysconfig.get_platform() == 'win32' else ['-std=c++17'],
+        #extra_compile_args=['/std:c++17'] if sysconfig.get_platform() == 'win32' else ['-std=c++17'],
         extra_link_args=[]
     )]
 )

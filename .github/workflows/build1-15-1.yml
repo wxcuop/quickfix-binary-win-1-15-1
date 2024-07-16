@@ -72,26 +72,27 @@ jobs:
         run: |
           mkdir -p ./quickfix-binary/C++
           mkdir -p ./quickfix-binary/spec
-          cp quickfix/build/*.dll ./quickfix-binary/C++  # Copy precompiled binaries
-          if (Test-Path -Path "quickfix/src/python3") {
-              cp quickfix/src/python3/*.py ./quickfix-binary/
-              cp quickfix/src/python3/QuickfixPython.cpp ./quickfix-binary/C++
-              cp quickfix/src/python3/QuickfixPython.h ./quickfix-binary/C++
+          cp ./quickfix/build/*.dll ./quickfix-binary/C++  # Copy precompiled binaries
+          if (Test-Path -Path "./quickfix/src/python3") {
+              cp ./quickfix/src/python3/*.py ./quickfix-binary/
+              cp ./quickfix/src/python3/QuickfixPython.cpp ./quickfix-binary/C++
+              cp ./quickfix/src/python3/QuickfixPython.h ./quickfix-binary/C++
           } else {
-              Write-Host "Path 'quickfix/src/python3' does not exist"
+              Write-Host "Path './quickfix/src/python3' does not exist"
           }
           
-          if (Test-Path -Path "quickfix/src/C++") {
-              cp quickfix/src/C++/*.h ./quickfix-binary/C++
-              cp quickfix/src/C++/*.hpp ./quickfix-binary/C++
-              cp quickfix/src/C++/*.cpp ./quickfix-binary/C++
-              cp -R quickfix/src/C++/double-conversion ./quickfix-binary/C++
+          if (Test-Path -Path "./quickfix/src/C++") {
+              cp ./quickfix/src/C++/*.h ./quickfix-binary/C++
+              cp ./quickfix/src/C++/*.hpp ./quickfix-binary/C++
+              cp ./quickfix/src/C++/*.cpp ./quickfix-binary/C++
+              cp ./quickfix/src/swig/*.* ./quickfix-binary/C++
+              cp -R ./quickfix/src/C++/double-conversion ./quickfix-binary/C++
           } else {
-              Write-Host "Path 'quickfix/src/C++' does not exist"
+              Write-Host "Path './quickfix/src/C++' does not exist"
           }
           
-          cp quickfix/LICENSE ./quickfix-binary/
-          cp quickfix/spec/FIX*.xml ./quickfix-binary/spec
+          cp ./quickfix/LICENSE ./quickfix-binary/
+          cp ./quickfix/spec/FIX*.xml ./quickfix-binary/spec
           touch ./quickfix-binary/C++/config.h
           touch ./quickfix-binary/C++/config_windows.h
 

@@ -18,13 +18,6 @@ jobs:
           key: vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-
-            
-      # Install ODBC Driver for SQL Server via MSI
-      - name: Install ODBC Driver for SQL Server
-        shell: pwsh
-        run: |
-          Invoke-WebRequest -Uri "https://go.microsoft.com/fwlink/?linkid=2335671" -OutFile msodbcsql18.msi
-          msiexec /i msodbcsql18.msi /quiet /qn /norestart IACCEPTMSODBCSQLLICENSETERMS=YES
 
       # Install library dependencies via vcpkg
       - name: Install Dependencies via vcpkg
@@ -69,12 +62,8 @@ jobs:
             -DHAVE_SSL=ON `
             -DLIBXML2_INCLUDE_DIR="../vcpkg/installed/x64-windows/include" `
             -DLIBXML2_LIBRARIES="../vcpkg/installed/x64-windows/lib/libxml2.lib" `
-            -DMYSQL_INCLUDE_DIR="../vcpkg/installed/x64-windows/include" `
-            -DMYSQL_LIBRARY="../vcpkg/installed/x64-windows/lib/libmysql.lib" `
             -DPOSTGRESQL_INCLUDE_DIR="../vcpkg/installed/x64-windows/include" `
             -DPOSTGRESQL_LIBRARY="../vcpkg/installed/x64-windows/lib/libpq.lib" `
-            -DHAVE_ODBC=ON `
-            -DHAVE_MYSQL=ON `
             -DHAVE_POSTGRESQL=ON `
             ../quickfix-1.15.1
           ninja

@@ -19,11 +19,11 @@ jobs:
           choco install -y mysql
           choco install -y postgresql
 
-      # Install ODBC Driver for SQL Server (msodbcsql) via official MSI
+      # Install ODBC Driver for SQL Server (msodbcsql) via official MSI (correct link as of late 2024)
       - name: Install ODBC Driver for SQL Server
         shell: pwsh
         run: |
-          Invoke-WebRequest -Uri "https://download.microsoft.com/download/e/e/b/eeb33635-4e68-4eb1-9d7a-60f8d3110b9c/en-US/msodbcsql18_18.1.2.1_x64.msi" -OutFile msodbcsql18.msi
+          Invoke-WebRequest -Uri "https://go.microsoft.com/fwlink/?linkid=2335671" -OutFile msodbcsql18.msi
           msiexec /i msodbcsql18.msi /quiet /qn /norestart IACCEPTMSODBCSQLLICENSETERMS=YES
 
       - name: Add libxml2 and PostgreSQL to PATH

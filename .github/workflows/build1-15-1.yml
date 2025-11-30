@@ -15,7 +15,7 @@ jobs:
       - name: Install ODBC Driver for SQL Server
         shell: pwsh
         run: |
-          Invoke-WebRequest -Uri "https://go. microsoft.com/fwlink/? linkid=2335671" -OutFile msodbcsql18.msi
+          Invoke-WebRequest -Uri "https://go.microsoft.com/fwlink/? linkid=2335671" -OutFile msodbcsql18.msi
           msiexec /i msodbcsql18.msi /quiet /qn /norestart IACCEPTMSODBCSQLLICENSETERMS=YES
 
       # Install library dependencies via vcpkg
@@ -36,7 +36,7 @@ jobs:
 
       # Unzip the QuickFIX source archive
       - name: Unpack QuickFIX sources
-        run: tar -xf quickfix-1.15.1.zip
+        run: tar -xf quickfix-1. 15.1.zip
 
       - name: Setup Python
         uses: actions/setup-python@v2
@@ -55,7 +55,7 @@ jobs:
           cmake -G Ninja `
             -DCMAKE_TOOLCHAIN_FILE="../vcpkg/scripts/buildsystems/vcpkg.cmake" `
             -DCMAKE_CXX_FLAGS="/EHsc /MD" `
-            -DCMAKE_EXE_LINKER_FLAGS="quickfix. lib ws2_32.lib" `
+            -DCMAKE_EXE_LINKER_FLAGS="quickfix.lib ws2_32.lib" `
             -Dquickfix_INCLUDE_DIR="../quickfix-1.15.1" `
             -Dquickfix_LIB_DIR="../quickfix-1.15.1/lib" `
             -DHAVE_SSL=ON `

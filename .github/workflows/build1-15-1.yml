@@ -16,7 +16,6 @@ jobs:
         run: |
           choco install -y ninja
           choco install -y libxml2
-          choco install -y mysql
           choco install -y postgresql
 
       # Install ODBC Driver for SQL Server
@@ -25,6 +24,15 @@ jobs:
         run: |
           Invoke-WebRequest -Uri "https://go.microsoft.com/fwlink/?linkid=2335671" -OutFile msodbcsql18.msi
           msiexec /i msodbcsql18.msi /quiet /qn /norestart IACCEPTMSODBCSQLLICENSETERMS=YES
+
+      # Install MySQL Client Libraries via vcpkg
+      - name: Install MySQL Client Libraries via vcpkg
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git
+          cd vcpkg
+          .\bootstrap-vcpkg.bat
+          .\vcpkg install mysql-client:x64-windows
+          cd ..
 
       - name: Add libxml2 and PostgreSQL to PATH
         run: |
@@ -60,6 +68,8 @@ jobs:
             -DHAVE_SSL=ON `
             -DLIBXML2_INCLUDE_DIR="C:/Program Files/libxml2/include" `
             -DLIBXML2_LIBRARIES="C:/Program Files/libxml2/lib" `
+            -DMYSQL_INCLUDE_DIR="../vcpkg/installed/x64-windows/include" `
+            -DMYSQL_LIBRARY="../vcpkg/installed/x64-windows/lib/libmysql.lib" `
             -DHAVE_ODBC=ON `
             -DHAVE_MYSQL=ON `
             -DHAVE_POSTGRESQL=ON `

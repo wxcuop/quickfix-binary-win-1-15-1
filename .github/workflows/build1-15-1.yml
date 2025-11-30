@@ -11,14 +11,19 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      # Install all dependencies via vcpkg
+      # Install build tools via Chocolatey
+      - name: Install Build Tools
+        run: |
+          choco install -y ninja
+
+      # Install all library dependencies via vcpkg
       - name: Install Dependencies via vcpkg
         run: |
           git clone https://github.com/microsoft/vcpkg.git
           cd vcpkg
           .\bootstrap-vcpkg.bat
-          .\vcpkg install ninja:x64-windows mysql-client:x64-windows libxml2:x64-windows libpq:x64-windows odbc:x64-windows
-          cd .. 
+          .\vcpkg install mysql-client:x64-windows libxml2:x64-windows libpq:x64-windows odbc:x64-windows
+          cd ..  
 
       - name: Add vcpkg binaries to PATH
         run: |
@@ -29,7 +34,7 @@ jobs:
 
       # Unzip the QuickFIX source archive
       - name: Unpack QuickFIX sources
-        run: tar -xf quickfix-1.15.1. zip
+        run: tar -xf quickfix-1.15.1.zip
 
       - name: Setup Python
         uses: actions/setup-python@v2

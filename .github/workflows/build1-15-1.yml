@@ -44,7 +44,7 @@ jobs:
 
       # Unzip the QuickFIX source archive
       - name: Unpack QuickFIX sources
-        run: tar -xf quickfix-1. 15.1.zip
+        run: tar -xf quickfix-1.15.1.zip
 
       - name: Setup Python
         uses: actions/setup-python@v2

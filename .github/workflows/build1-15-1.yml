@@ -18,19 +18,25 @@ jobs:
           choco install -y libxml2
           choco install -y mysql
           choco install -y postgresql
-          choco install -y msodbcsql
 
-      - name: Add libxml2 to PATH
-        run: echo "C:\Program Files\libxml2\bin" | Out-File -Append -FilePath $env:GITHUB_PATH
+      # Install ODBC Driver for SQL Server (msodbcsql) via official MSI
+      - name: Install ODBC Driver for SQL Server
+        shell: pwsh
+        run: |
+          Invoke-WebRequest -Uri "https://download.microsoft.com/download/e/e/b/eeb33635-4e68-4eb1-9d7a-60f8d3110b9c/en-US/msodbcsql18_18.1.2.1_x64.msi" -OutFile msodbcsql18.msi
+          msiexec /i msodbcsql18.msi /quiet /qn /norestart IACCEPTMSODBCSQLLICENSETERMS=YES
 
-      # Ensure MSVC environment is set up for builds
+      - name: Add libxml2 and PostgreSQL to PATH
+        run: |
+          echo "C:\Program Files\libxml2\bin" | Out-File -Append -FilePath $env:GITHUB_PATH
+          echo "C:\Program Files\PostgreSQL\18\bin" | Out-File -Append -FilePath $env:GITHUB_PATH
+
       - name: Setup MSVC Developer Command Prompt
         uses: ilammy/msvc-dev-cmd@v1
 
-      # Unzip QuickFIX source
+      # Unzip the QuickFIX source archive, assuming the zip is in the repo
       - name: Unpack QuickFIX sources
-        run: |
-          tar -xf quickfix-1.15.1.zip
+        run: tar -xf quickfix-1.15.1.zip
 
       - name: Setup Python
         uses: actions/setup-python@v2
@@ -40,7 +46,7 @@ jobs:
       - name: Install Python build dependencies
         run: pip install setuptools wheel
 
-      # Configure and build with CMake and Ninja pointing to the unzipped source dir
+      # Configure and build with CMake and Ninja, pointing to the unzipped source dir
       - name: Build with CMake/Ninja
         run: |
           mkdir build
@@ -62,7 +68,6 @@ jobs:
       - name: Build Wheel
         run: python setup.py bdist_wheel
 
-      # Upload the built wheel as an artifact
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:

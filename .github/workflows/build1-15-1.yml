@@ -11,13 +11,20 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      # Install all library dependencies via vcpkg
+      # Install ODBC Driver for SQL Server via MSI
+      - name: Install ODBC Driver for SQL Server
+        shell: pwsh
+        run: |
+          Invoke-WebRequest -Uri "https://go. microsoft.com/fwlink/? linkid=2335671" -OutFile msodbcsql18.msi
+          msiexec /i msodbcsql18.msi /quiet /qn /norestart IACCEPTMSODBCSQLLICENSETERMS=YES
+
+      # Install library dependencies via vcpkg
       - name: Install Dependencies via vcpkg
         run: |
           git clone https://github.com/microsoft/vcpkg.git
           cd vcpkg
           .\bootstrap-vcpkg.bat
-          .\vcpkg install libmysql:x64-windows libxml2:x64-windows libpq:x64-windows odbc:x64-windows
+          .\vcpkg install libmysql:x64-windows libxml2:x64-windows libpq:x64-windows
           cd ..  
 
       - name: Add vcpkg binaries to PATH
@@ -58,8 +65,6 @@ jobs:
             -DMYSQL_LIBRARY="../vcpkg/installed/x64-windows/lib/libmysql.lib" `
             -DPOSTGRESQL_INCLUDE_DIR="../vcpkg/installed/x64-windows/include" `
             -DPOSTGRESQL_LIBRARY="../vcpkg/installed/x64-windows/lib/libpq.lib" `
-            -DODBC_INCLUDE_DIR="../vcpkg/installed/x64-windows/include" `
-            -DODBC_LIBRARY="../vcpkg/installed/x64-windows/lib/odbc32. lib" `
             -DHAVE_ODBC=ON `
             -DHAVE_MYSQL=ON `
             -DHAVE_POSTGRESQL=ON `

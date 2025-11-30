@@ -19,7 +19,7 @@ jobs:
           choco install -y mysql
           choco install -y postgresql
 
-      # Install ODBC Driver for SQL Server (msodbcsql) via official MSI (correct link as of late 2024)
+      # Install ODBC Driver for SQL Server
       - name: Install ODBC Driver for SQL Server
         shell: pwsh
         run: |
@@ -46,22 +46,23 @@ jobs:
       - name: Install Python build dependencies
         run: pip install setuptools wheel
 
-      # Configure and build with CMake and Ninja, pointing to the unzipped source dir
+      # Configure and build with CMake and Ninja, using PowerShell and no line continuations
       - name: Build with CMake/Ninja
+        shell: pwsh
         run: |
           mkdir build
           cd build
-          cmake -G Ninja ^
-            -DCMAKE_CXX_FLAGS="/EHsc /MD" ^
-            -DCMAKE_EXE_LINKER_FLAGS="quickfix.lib ws2_32.lib" ^
-            -Dquickfix_INCLUDE_DIR="../quickfix-1.15.1" ^
-            -Dquickfix_LIB_DIR="../quickfix-1.15.1/lib" ^
-            -DHAVE_SSL=ON ^
-            -DLIBXML2_INCLUDE_DIR="C:/Program Files/libxml2/include" ^
-            -DLIBXML2_LIBRARIES="C:/Program Files/libxml2/lib" ^
-            -DHAVE_ODBC=ON ^
-            -DHAVE_MYSQL=ON ^
-            -DHAVE_POSTGRESQL=ON ^
+          cmake -G Ninja `
+            -DCMAKE_CXX_FLAGS="/EHsc /MD" `
+            -DCMAKE_EXE_LINKER_FLAGS="quickfix.lib ws2_32.lib" `
+            -Dquickfix_INCLUDE_DIR="../quickfix-1.15.1" `
+            -Dquickfix_LIB_DIR="../quickfix-1.15.1/lib" `
+            -DHAVE_SSL=ON `
+            -DLIBXML2_INCLUDE_DIR="C:/Program Files/libxml2/include" `
+            -DLIBXML2_LIBRARIES="C:/Program Files/libxml2/lib" `
+            -DHAVE_ODBC=ON `
+            -DHAVE_MYSQL=ON `
+            -DHAVE_POSTGRESQL=ON `
             ../quickfix-1.15.1
           ninja
 

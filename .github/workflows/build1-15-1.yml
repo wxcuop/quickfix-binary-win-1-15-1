@@ -15,7 +15,7 @@ jobs:
       - name: Install ODBC Driver for SQL Server
         shell: pwsh
         run: |
-          Invoke-WebRequest -Uri "https://go.microsoft.com/fwlink/? linkid=2335671" -OutFile msodbcsql18.msi
+          Invoke-WebRequest -Uri "https://go.microsoft.com/fwlink/?linkid=2335671" -OutFile msodbcsql18.msi
           msiexec /i msodbcsql18.msi /quiet /qn /norestart IACCEPTMSODBCSQLLICENSETERMS=YES
 
       # Install library dependencies via vcpkg

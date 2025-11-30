@@ -11,18 +11,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      # Install build tools via Chocolatey
-      - name: Install Build Tools
-        run: |
-          choco install -y ninja
-
       # Install all library dependencies via vcpkg
       - name: Install Dependencies via vcpkg
         run: |
           git clone https://github.com/microsoft/vcpkg.git
           cd vcpkg
           .\bootstrap-vcpkg.bat
-          .\vcpkg install mysql-client:x64-windows libxml2:x64-windows libpq:x64-windows odbc:x64-windows
+          .\vcpkg install libmysql:x64-windows libxml2:x64-windows libpq:x64-windows odbc:x64-windows
           cd ..  
 
       - name: Add vcpkg binaries to PATH
@@ -64,7 +59,7 @@ jobs:
             -DPOSTGRESQL_INCLUDE_DIR="../vcpkg/installed/x64-windows/include" `
             -DPOSTGRESQL_LIBRARY="../vcpkg/installed/x64-windows/lib/libpq.lib" `
             -DODBC_INCLUDE_DIR="../vcpkg/installed/x64-windows/include" `
-            -DODBC_LIBRARY="../vcpkg/installed/x64-windows/lib/odbc32.lib" `
+            -DODBC_LIBRARY="../vcpkg/installed/x64-windows/lib/odbc32. lib" `
             -DHAVE_ODBC=ON `
             -DHAVE_MYSQL=ON `
             -DHAVE_POSTGRESQL=ON `

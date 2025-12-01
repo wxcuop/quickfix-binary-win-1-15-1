@@ -36,9 +36,13 @@ jobs:
       - name: Setup MSVC Developer Command Prompt
         uses: ilammy/msvc-dev-cmd@v1
 
-      # Unzip the QuickFIX source archive
-      - name: Unpack QuickFIX sources
-        run: tar -xf quickfix-1.15.1.zip
+      # # Unzip the QuickFIX source archive
+      # - name: Unpack QuickFIX sources
+      #   run: tar -xf quickfix-1.15.1.zip
+      - name: Download QuickFIX sources
+        run: |
+         curl -L -o quickfix-1.15.1.zip https://github.com/quickfix/quickfix/archive/refs/tags/v1.15.1.zip
+         tar -xf quickfix-1.15.1.zip
 
       - name: Setup Python
         uses: actions/setup-python@v4

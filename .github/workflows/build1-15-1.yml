@@ -65,6 +65,8 @@ jobs:
             -DPOSTGRESQL_INCLUDE_DIR="../vcpkg/installed/x64-windows/include" `
             -DPOSTGRESQL_LIBRARY="../vcpkg/installed/x64-windows/lib/libpq.lib" `
             -DHAVE_POSTGRESQL=ON `
+            -DBUILD_EXAMPLES=OFF `
+            -DBUILD_UNIT_TESTS=OFF `
             ../quickfix-1.15.1
           ninja
 
